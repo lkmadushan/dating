@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App\UseCases;
 
-use App\Exceptions\NotAppliedForEvent;
+use App\Exceptions\AlreadyDeclinedEvent;
+use App\Exceptions\NotAppliedEvent;
 use App\Models\Event;
 use App\Models\User;
 use Exception;
@@ -15,8 +16,12 @@ class ConfirmAttendanceUseCase
 {
     public function execute(User $attendee, Event $event): void
     {
+        if ($attendee->hasDeclined($event)) {
+            throw AlreadyDeclinedEvent::create($event);
+        }
+
         if ($attendee->hasNotApplied($event)) {
-            throw NotAppliedForEvent::create($event);
+            throw NotAppliedEvent::create($event);
         }
 
         try {

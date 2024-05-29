@@ -5,10 +5,10 @@ namespace App\Exceptions;
 use App\Models\Event;
 use RuntimeException;
 
-class AlreadyAppliedForEvent extends RuntimeException
+class AlreadyDeclinedEvent extends RuntimeException
 {
     public static function create(Event $event): self
     {
-        return new self('You are already applied this event');
+        return new self('You have already declined this event');
     }
 }

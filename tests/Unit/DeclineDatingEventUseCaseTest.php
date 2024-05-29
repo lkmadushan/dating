@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Exceptions\EventAlreadyDeclined;
+use App\Exceptions\AlreadyDeclinedEvent;
 use App\Models\Event;
 use App\Models\User;
 use App\UseCases\DeclineDatingEventUseCase;
@@ -34,7 +34,7 @@ class DeclineDatingEventUseCaseTest extends TestCase
         $usecase = new DeclineDatingEventUseCase;
         $usecase->execute($attendee, $event);
 
-        $this->expectException(EventAlreadyDeclined::class);
+        $this->expectException(AlreadyDeclinedEvent::class);
 
         $usecase = new DeclineDatingEventUseCase;
         $usecase->execute($attendee, $event);

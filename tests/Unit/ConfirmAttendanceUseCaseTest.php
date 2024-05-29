@@ -4,11 +4,13 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Exceptions\NotAppliedForEvent;
+use App\Exceptions\AlreadyDeclinedEvent;
+use App\Exceptions\NotAppliedEvent;
 use App\Models\Event;
 use App\Models\User;
 use App\UseCases\ConfirmAttendanceUseCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Date;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -36,7 +38,20 @@ class ConfirmAttendanceUseCaseTest extends TestCase
         $event = Event::factory()->create();
         $attendee = User::factory()->create();
 
-        $this->expectException(NotAppliedForEvent::class);
+        $this->expectException(NotAppliedEvent::class);
+
+        $usecase = new ConfirmAttendanceUseCase;
+        $usecase->execute($attendee, $event);
+    }
+
+    #[Test]
+    public function given_declined_event_throw_exception()
+    {
+        $event = Event::factory()->create();
+        $attendee = User::factory()->create();
+        $attendee->attendance()->attach($event, ['declined_at' => Date::now()]);
+
+        $this->expectException(AlreadyDeclinedEvent::class);
 
         $usecase = new ConfirmAttendanceUseCase;
         $usecase->execute($attendee, $event);

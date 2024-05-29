@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Exceptions\AlreadyAppliedForEvent;
-use App\Exceptions\EventPaymentRequired;
+use App\Exceptions\AlreadyAppliedEvent;
+use App\Exceptions\AlreadyDeclinedEvent;
+use App\Exceptions\PaymentRequiredEvent;
 use App\Models\Event;
 use App\Models\User;
 use App\UseCases\ApplyDatingEventCommand;
@@ -42,7 +43,7 @@ class ApplyDatingEventUseCaseTest extends TestCase
         $command = new ApplyDatingEventCommand;
         $command->event = $event;
 
-        $this->expectException(EventPaymentRequired::class);
+        $this->expectException(PaymentRequiredEvent::class);
 
         $usecase = new ApplyDatingEventUseCase;
         $usecase->execute($applier, $command);
@@ -59,8 +60,23 @@ class ApplyDatingEventUseCaseTest extends TestCase
         $usecase = new ApplyDatingEventUseCase;
         $usecase->execute($applier, $command);
 
-        $this->expectException(AlreadyAppliedForEvent::class);
+        $this->expectException(AlreadyAppliedEvent::class);
 
+        $usecase = new ApplyDatingEventUseCase;
+        $usecase->execute($applier, $command);
+    }
+
+    #[Test]
+    public function given_already_declined_event_throws_exception()
+    {
+        $event = Event::factory()->create();
+        $applier = User::factory()->create();
+        $applier->attendance()->attach($event, ['declined_at' => Date::now()]);
+
+        $this->expectException(AlreadyDeclinedEvent::class);
+
+        $command = new ApplyDatingEventCommand;
+        $command->event = $event;
         $usecase = new ApplyDatingEventUseCase;
         $usecase->execute($applier, $command);
     }
