@@ -40,6 +40,15 @@ class User extends Authenticatable
         ];
     }
 
+    public function hasConfirmed(Event $event): bool
+    {
+        return $this->attendance()
+            ->where('event_id', $event->getKey())
+            ->wherePivotNotNull('confirmed_at')
+            ->wherePivotNull('declined_at')
+            ->exists();
+    }
+
     public function hasDeclined(Event $event): bool
     {
         return $this->attendance()
