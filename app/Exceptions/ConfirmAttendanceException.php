@@ -2,9 +2,9 @@
 
 namespace App\Exceptions;
 
-use Exception;
+use DomainException;
 
-class ConfirmAttendanceException extends Exception
+class ConfirmAttendanceException extends DomainException
 {
     public static function notApplied(): static
     {

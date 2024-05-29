@@ -26,6 +26,12 @@ return new class extends Migration
             $table->foreignId('event_id')->constrained('events');
             $table->timestamp('confirmed_at')->nullable();
         });
+
+        Schema::create('payments', function (Blueprint $table) {
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('event_id')->constrained('events');
+            $table->timestamp('paid_at')->nullable();
+        });
     }
 
     public function down(): void
