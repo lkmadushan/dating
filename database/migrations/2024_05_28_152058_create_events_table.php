@@ -25,6 +25,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('event_id')->constrained('events');
             $table->timestamp('confirmed_at')->nullable();
+            $table->timestamp('declined_at')->nullable();
         });
 
         Schema::create('payments', function (Blueprint $table) {
