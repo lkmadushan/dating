@@ -27,7 +27,7 @@ class DeclineDatingEventUseCaseTest extends TestCase
     }
 
     #[Test]
-    public function given_already_applied_event_throws_exception()
+    public function given_already_declined_event_throws_exception()
     {
         $event = Event::factory()->create();
         $attendee = User::factory()->create();
