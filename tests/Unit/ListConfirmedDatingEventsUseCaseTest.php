@@ -33,10 +33,18 @@ class ListConfirmedDatingEventsUseCaseTest extends TestCase
         $event2->attendance()->attach($organisers->modelKeys(), ['confirmed_at' => Date::now()]);
         $event3 = Event::factory()->create([
             'organiser_id' => $organiser1->id,
+            'confirmed_participant_count' => 2
+        ]);
+        $event3->attendance()->attach(
+            $organisers->modelKeys(),
+            ['confirmed_at' => Date::now(), 'declined_at' => Date::now()]
+        );
+        $event4 = Event::factory()->create([
+            'organiser_id' => $organiser1->id,
             'confirmed_participant_count' => 1
         ]);
-        $event3->attendance()->attach($organiser1, ['confirmed_at' => Date::now()]);
-        $event4 = Event::factory()->create(['confirmed_participant_count' => 2]);
+        $event4->attendance()->attach($organiser1, ['confirmed_at' => Date::now()]);
+        $event5 = Event::factory()->create(['confirmed_participant_count' => 2]);
 
         $useCase = new ListConfirmedDatingEventsUseCase;
         $events = $useCase->execute($organiser1);
@@ -46,5 +54,6 @@ class ListConfirmedDatingEventsUseCaseTest extends TestCase
         $this->assertTrue($events->contains($event2));
         $this->assertFalse($events->contains($event3));
         $this->assertFalse($events->contains($event4));
+        $this->assertFalse($events->contains($event5));
     }
 }

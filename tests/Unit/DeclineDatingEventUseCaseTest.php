@@ -23,7 +23,22 @@ class DeclineDatingEventUseCaseTest extends TestCase
         $usecase = new DeclineDatingEventUseCase;
         $usecase->execute($attendee, $event);
 
-        $this->assertTrue($attendee->attendance()->wherePivotNotNull('declined_at')->get()->contains($event));
+        $this->assertCount(1, $event->attendance);
+        $event->attendance->each(fn ($event) => $this->assertNotNull($event->pivot->declined_at));
+    }
+
+    #[Test]
+    public function given_already_applied_event_declines_attendance()
+    {
+        $event = Event::factory()->create();
+        $attendee = User::factory()->create();
+        $attendee->attendance()->attach($event);
+
+        $usecase = new DeclineDatingEventUseCase;
+        $usecase->execute($attendee, $event);
+
+        $this->assertCount(1, $event->attendance);
+        $event->attendance->each(fn ($event) => $this->assertNotNull($event->pivot->declined_at));
     }
 
     #[Test]

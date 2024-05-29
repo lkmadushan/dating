@@ -29,7 +29,7 @@ class ConfirmAttendanceUseCaseTest extends TestCase
         $usecase->execute($attendee, $event);
 
         $this->assertEquals(2, $event->confirmed_participant_count);
-        $this->assertTrue($attendee->attendance()->wherePivotNotNull('confirmed_at')->get()->contains($event));
+        $event->attendance->each(fn ($event) => $this->assertNotNull($event->pivot->confirmed_at));
     }
 
     #[Test]

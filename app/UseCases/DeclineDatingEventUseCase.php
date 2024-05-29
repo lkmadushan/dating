@@ -15,6 +15,7 @@ class DeclineDatingEventUseCase
             throw AlreadyDeclinedEvent::create($event);
         }
 
-        $decliner->attendance()->attach($event, ['declined_at' => Date::now()]);
+        $decliner->attendance()
+            ->syncWithoutDetaching([$event->getKey() => ['declined_at' => Date::now()]]);
     }
 }

@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Casts\Period;
 use Carbon\CarbonPeriod;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -18,6 +19,7 @@ use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
  * @property string $organiser_id;
  * @property string $notes
  * @property CarbonPeriod $period
+ * @property Collection $attendance
  * @property int $confirmed_participant_count
  */
 class Event extends Model
@@ -32,6 +34,6 @@ class Event extends Model
     public function attendance(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'attendance')
-            ->withPivot('confirmed_at');
+            ->withPivot('confirmed_at', 'declined_at');
     }
 }
