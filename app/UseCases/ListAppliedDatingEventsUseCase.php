@@ -9,20 +9,17 @@ use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
-class ListConfirmedDatingEventsUseCase
+class ListAppliedDatingEventsUseCase
 {
-    public function execute(User $viewer): Collection
+    public function execute(User $attendee): Collection
     {
         return Event::query()
-            ->with('attendance')
             ->whereIn(
                 'id',
-                DB::table('attendance')
+                DB::table('payments')
                     ->select('event_id')
-                    ->where('user_id', $viewer->getKey())
-                    ->whereNotNull('confirmed_at')
+                    ->where('user_id', $attendee->getKey())
             )
-            ->where('confirmed_participant_count', '>', 1)
             ->get();
     }
 }
