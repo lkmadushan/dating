@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCases;
 
-use App\Exceptions\ConfirmAttendanceException;
+use App\Exceptions\NotAppliedForEvent;
 use App\Models\Event;
 use App\Models\User;
 use Exception;
@@ -16,7 +16,7 @@ class ConfirmAttendanceUseCase
     public function execute(User $attendee, Event $event): void
     {
         if ($attendee->hasNotApplied($event)) {
-            throw ConfirmAttendanceException::notApplied();
+            throw NotAppliedForEvent::create($event);
         }
 
         try {

@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Exceptions\ApplyDatingEventException;
+use App\Exceptions\AlreadyAppliedForEvent;
+use App\Exceptions\EventPaymentRequired;
 use App\Models\Event;
 use App\Models\User;
 use App\UseCases\ApplyDatingEventCommand;
@@ -41,7 +42,7 @@ class ApplyDatingEventUseCaseTest extends TestCase
         $command = new ApplyDatingEventCommand;
         $command->event = $event;
 
-        $this->expectException(ApplyDatingEventException::class);
+        $this->expectException(EventPaymentRequired::class);
 
         $usecase = new ApplyDatingEventUseCase;
         $usecase->execute($applier, $command);
@@ -58,7 +59,7 @@ class ApplyDatingEventUseCaseTest extends TestCase
         $usecase = new ApplyDatingEventUseCase;
         $usecase->execute($applier, $command);
 
-        $this->expectException(ApplyDatingEventException::class);
+        $this->expectException(AlreadyAppliedForEvent::class);
 
         $usecase = new ApplyDatingEventUseCase;
         $usecase->execute($applier, $command);

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
-use App\Exceptions\ConfirmAttendanceException;
+use App\Exceptions\NotAppliedForEvent;
 use App\Models\Event;
 use App\Models\User;
 use App\UseCases\ConfirmAttendanceUseCase;
@@ -36,7 +36,7 @@ class ConfirmAttendanceUseCaseTest extends TestCase
         $event = Event::factory()->create();
         $attendee = User::factory()->create();
 
-        $this->expectException(ConfirmAttendanceException::class);
+        $this->expectException(NotAppliedForEvent::class);
 
         $usecase = new ConfirmAttendanceUseCase;
         $usecase->execute($attendee, $event);
