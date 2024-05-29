@@ -15,7 +15,7 @@ class ConfirmAttendanceUseCase
 {
     public function execute(User $attendee, Event $event): void
     {
-        if (! $attendee->attendance()->where('event_id', $event->getKey())->exists()) {
+        if ($attendee->hasNotApplied($event)) {
             throw ConfirmAttendanceException::notApplied();
         }
 

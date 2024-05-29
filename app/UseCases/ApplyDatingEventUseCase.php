@@ -11,11 +11,11 @@ class ApplyDatingEventUseCase
 {
     public function execute(User $applier, ApplyDatingEventCommand $command): void
     {
-        if ($applier->attendance()->where('event_id', $command->event->getKey())->exists()) {
+        if ($applier->hasApplied($command->event)) {
             throw ApplyDatingEventException::alreadyApplied();
         }
 
-        if (! $applier->payments()->where('event_id', $command->event->getKey())->exists()) {
+        if ($applier->hasNotPaid($command->event)) {
             throw ApplyDatingEventException::paymentRequired();
         }
 

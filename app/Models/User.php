@@ -40,6 +40,26 @@ class User extends Authenticatable
         ];
     }
 
+    public function hasApplied(Event $event): bool
+    {
+        return $this->attendance()->where('event_id', $event->getKey())->exists();
+    }
+
+    public function hasNotApplied(Event $event): bool
+    {
+        return ! $this->hasApplied($event);
+    }
+
+    public function hasPaid(Event $event): bool
+    {
+        return $this->payments()->where('event_id', $event->getKey())->exists();
+    }
+
+    public function hasNotPaid(Event $event): bool
+    {
+        return ! $this->hasPaid($event);
+    }
+
     public function events(): HasMany
     {
         return $this->hasMany(Event::class, 'organiser_id');
