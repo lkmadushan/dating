@@ -37,7 +37,7 @@ class ListConfirmedDatingEventsUseCaseTest extends TestCase
         ]);
         $event3->attendance()->attach(
             $organisers->modelKeys(),
-            ['accepted_at' => Date::now(), 'declined_at' => Date::now()]
+            ['accepted_at' => Date::now(), 'cancelled_at' => Date::now()]
         );
         $event4 = Event::factory()->create([
             'organiser_id' => $organiser1->id,

@@ -40,31 +40,12 @@ class User extends Authenticatable
         ];
     }
 
-    public function hasConfirmed(Event $event): bool
+    public function hasCancelled(Event $event): bool
     {
         return $this->attendance()
             ->where('event_id', $event->getKey())
-            ->wherePivotNotNull('confirmed_at')
-            ->wherePivotNull('declined_at')
+            ->wherePivotNotNull('cancelled_at')
             ->exists();
-    }
-
-    public function hasDeclined(Event $event): bool
-    {
-        return $this->attendance()
-            ->where('event_id', $event->getKey())
-            ->wherePivotNotNull('declined_at')
-            ->exists();
-    }
-
-    public function hasNotApplied(Event $event): bool
-    {
-        return ! $this->hasApplied($event);
-    }
-
-    public function hasApplied(Event $event): bool
-    {
-        return $this->attendance()->where('event_id', $event->getKey())->exists();
     }
 
     public function hasNotPaid(Event $event): bool
@@ -85,7 +66,7 @@ class User extends Authenticatable
     public function attendance(): BelongsToMany
     {
         return $this->belongsToMany(Event::class, 'attendance')
-            ->withPivot(['accepted_at', 'declined_at']);
+            ->withPivot(['accepted_at', 'cancelled_at']);
     }
 
     public function payments(): BelongsToMany

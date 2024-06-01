@@ -20,11 +20,11 @@ class ListAppliedDatingEventsUseCaseTest extends TestCase
     public function list_applied_dating_events()
     {
         $event = Event::factory()->create();
-        $attendee = User::factory()->create();
-        $attendee->payments()->attach($event, ['paid_at' => Date::now()]);
+        $applicant = User::factory()->create();
+        $applicant->payments()->attach($event, ['paid_at' => Date::now()]);
 
         $usecase = new ListAppliedDatingEventsUseCase;
-        $events = $usecase->execute($attendee);
+        $events = $usecase->execute($applicant);
 
         $this->assertTrue($events->contains($event));
     }

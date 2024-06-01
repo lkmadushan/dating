@@ -20,7 +20,7 @@ class ListConfirmedDatingEventsUseCase
                 DB::table('attendance')
                     ->select('event_id')
                     ->where('user_id', $viewer->getKey())
-                    ->whereNull('declined_at')
+                    ->whereNull('cancelled_at')
                     ->whereNotNull('accepted_at')
             )
             ->where('confirmed_participant_count', '>', 1)

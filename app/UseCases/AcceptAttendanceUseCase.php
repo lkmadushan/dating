@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\UseCases;
 
-use App\Exceptions\AlreadyDeclinedEvent;
 use App\Exceptions\NotAppliedEvent;
-use App\Models\Event;
+use App\Exceptions\UnauthorizedEvent;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\Date;
@@ -14,21 +13,23 @@ use Illuminate\Support\Facades\DB;
 
 class AcceptAttendanceUseCase
 {
-    public function execute(User $attendee, Event $event): void
+    public function execute(User $organiser, AcceptAttendanceCommand $command): void
     {
-        if ($attendee->hasDeclined($event)) {
-            throw AlreadyDeclinedEvent::create($event);
+        if ($command->event->organiser->isNot($organiser)) {
+            throw UnauthorizedEvent::notAllowedToAcceptApplicant($command->applicant, $command->event);
         }
 
-        if ($attendee->hasNotApplied($event)) {
-            throw NotAppliedEvent::create($event);
+        if ($command->applicant->hasNotPaid($command->event)) {
+            throw NotAppliedEvent::create($command->applicant, $command->event);
         }
 
         try {
             DB::beginTransaction();
 
-            $attendee->attendance()->updateExistingPivot($event->getKey(), ['accepted_at' => Date::now()]);
-            $event->increment('confirmed_participant_count');
+            $command->event
+                ->attendance()
+                ->syncWithoutDetaching([$command->applicant->getKey() => ['accepted_at' => Date::now()]]);
+            $command->event->increment('confirmed_participant_count');
 
             DB::commit();
         } catch (Exception) {

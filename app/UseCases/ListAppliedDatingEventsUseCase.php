@@ -11,14 +11,14 @@ use Illuminate\Support\Facades\DB;
 
 class ListAppliedDatingEventsUseCase
 {
-    public function execute(User $attendee): Collection
+    public function execute(User $applicant): Collection
     {
         return Event::query()
             ->whereIn(
                 'id',
                 DB::table('payments')
                     ->select('event_id')
-                    ->where('user_id', $attendee->getKey())
+                    ->where('user_id', $applicant->getKey())
             )
             ->get();
     }

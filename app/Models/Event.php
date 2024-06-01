@@ -9,7 +9,9 @@ use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Carbon;
 use MatanYadaev\EloquentSpatial\Objects\Point;
 use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
 
@@ -20,7 +22,9 @@ use MatanYadaev\EloquentSpatial\Traits\HasSpatial;
  * @property string $notes
  * @property CarbonPeriod $period
  * @property Collection $attendance
+ * @property User $organiser
  * @property int $confirmed_participant_count
+ * @property Carbon $cancelled_at
  */
 class Event extends Model
 {
@@ -31,9 +35,14 @@ class Event extends Model
         'location' => Point::class,
     ];
 
+    public function organiser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'organiser_id');
+    }
+
     public function attendance(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'attendance')
-            ->withPivot('accepted_at', 'declined_at');
+            ->withPivot(['accepted_at', 'cancelled_at']);
     }
 }

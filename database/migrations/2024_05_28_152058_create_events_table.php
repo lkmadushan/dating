@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('timezone', 25);
             $table->geometry('location', subtype: 'point')->nullable();
             $table->unsignedInteger('confirmed_participant_count');
+            $table->timestamp('cancelled_at')->nullable();
             $table->timestamps();
         });
 
@@ -25,7 +26,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('event_id')->constrained('events');
             $table->timestamp('accepted_at')->nullable();
-            $table->timestamp('declined_at')->nullable();
+            $table->timestamp('cancelled_at')->nullable();
         });
 
         Schema::create('payments', function (Blueprint $table) {
