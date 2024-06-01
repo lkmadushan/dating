@@ -24,7 +24,7 @@ return new class extends Migration
         Schema::create('attendance', function (Blueprint $table) {
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('event_id')->constrained('events');
-            $table->timestamp('confirmed_at')->nullable();
+            $table->timestamp('accepted_at')->nullable();
             $table->timestamp('declined_at')->nullable();
         });
 

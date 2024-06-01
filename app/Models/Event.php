@@ -34,6 +34,6 @@ class Event extends Model
     public function attendance(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'attendance')
-            ->withPivot('confirmed_at', 'declined_at');
+            ->withPivot('accepted_at', 'declined_at');
     }
 }

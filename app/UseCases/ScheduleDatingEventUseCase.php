@@ -25,7 +25,7 @@ class ScheduleDatingEventUseCase
             $event->confirmed_participant_count = 1;
 
             $user->events()->save($event);
-            $user->attendance()->attach($event, ['confirmed_at' => Date::now()]);
+            $user->attendance()->attach($event, ['accepted_at' => Date::now()]);
 
             DB::commit();
         } catch (Exception) {

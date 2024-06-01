@@ -25,25 +25,25 @@ class ListConfirmedDatingEventsUseCaseTest extends TestCase
             'organiser_id' => $organiser1->id,
             'confirmed_participant_count' => 2,
         ]);
-        $event1->attendance()->attach($organisers->modelKeys(), ['confirmed_at' => Date::now()]);
+        $event1->attendance()->attach($organisers->modelKeys(), ['accepted_at' => Date::now()]);
         $event2 = Event::factory()->create([
             'organiser_id' => $organiser2->id,
             'confirmed_participant_count' => 2,
         ]);
-        $event2->attendance()->attach($organisers->modelKeys(), ['confirmed_at' => Date::now()]);
+        $event2->attendance()->attach($organisers->modelKeys(), ['accepted_at' => Date::now()]);
         $event3 = Event::factory()->create([
             'organiser_id' => $organiser1->id,
             'confirmed_participant_count' => 2
         ]);
         $event3->attendance()->attach(
             $organisers->modelKeys(),
-            ['confirmed_at' => Date::now(), 'declined_at' => Date::now()]
+            ['accepted_at' => Date::now(), 'declined_at' => Date::now()]
         );
         $event4 = Event::factory()->create([
             'organiser_id' => $organiser1->id,
             'confirmed_participant_count' => 1
         ]);
-        $event4->attendance()->attach($organiser1, ['confirmed_at' => Date::now()]);
+        $event4->attendance()->attach($organiser1, ['accepted_at' => Date::now()]);
         $event5 = Event::factory()->create(['confirmed_participant_count' => 2]);
 
         $useCase = new ListConfirmedDatingEventsUseCase;

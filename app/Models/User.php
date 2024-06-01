@@ -85,7 +85,7 @@ class User extends Authenticatable
     public function attendance(): BelongsToMany
     {
         return $this->belongsToMany(Event::class, 'attendance')
-            ->withPivot(['confirmed_at', 'declined_at']);
+            ->withPivot(['accepted_at', 'declined_at']);
     }
 
     public function payments(): BelongsToMany

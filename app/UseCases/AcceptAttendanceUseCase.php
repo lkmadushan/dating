@@ -12,7 +12,7 @@ use Exception;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 
-class ConfirmAttendanceUseCase
+class AcceptAttendanceUseCase
 {
     public function execute(User $attendee, Event $event): void
     {
@@ -27,7 +27,7 @@ class ConfirmAttendanceUseCase
         try {
             DB::beginTransaction();
 
-            $attendee->attendance()->updateExistingPivot($event->getKey(), ['confirmed_at' => Date::now()]);
+            $attendee->attendance()->updateExistingPivot($event->getKey(), ['accepted_at' => Date::now()]);
             $event->increment('confirmed_participant_count');
 
             DB::commit();

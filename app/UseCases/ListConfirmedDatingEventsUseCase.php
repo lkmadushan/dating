@@ -21,7 +21,7 @@ class ListConfirmedDatingEventsUseCase
                     ->select('event_id')
                     ->where('user_id', $viewer->getKey())
                     ->whereNull('declined_at')
-                    ->whereNotNull('confirmed_at')
+                    ->whereNotNull('accepted_at')
             )
             ->where('confirmed_participant_count', '>', 1)
             ->get();

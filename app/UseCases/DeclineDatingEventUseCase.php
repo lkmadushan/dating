@@ -17,18 +17,6 @@ class DeclineDatingEventUseCase
             throw AlreadyDeclinedEvent::create($event);
         }
 
-        try {
-            DB::beginTransaction();
-
-            if ($user->hasConfirmed($event)) {
-                $event->decrement('confirmed_participant_count');
-            }
-
-            $user->attendance()->syncWithoutDetaching([$event->getKey() => ['declined_at' => Date::now()]]);
-
-            DB::commit();
-        } catch (Exception $e) {
-            DB::rollBack();
-        }
+        $user->attendance()->syncWithoutDetaching([$event->getKey() => ['declined_at' => Date::now()]]);
     }
 }
