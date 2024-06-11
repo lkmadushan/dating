@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\UseCases;
 
-use App\Models\Event;
+use App\Aggregates\Event;
 use App\Models\User;
 
 class AcceptAttendanceCommand

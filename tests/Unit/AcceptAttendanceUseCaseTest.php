@@ -4,66 +4,77 @@ declare(strict_types=1);
 
 namespace Tests\Unit;
 
+use App\Aggregates\Event;
+use App\EventRepository;
+use App\Events\ApplicantHasNotPaid;
+use App\Events\ApplicantWasAccepted;
+use App\Events\EventPaymentReceived;
 use App\Exceptions\NotAppliedEvent;
-use App\Exceptions\UnauthorizedEvent;
-use App\Models\Event;
 use App\Models\User;
 use App\UseCases\AcceptAttendanceCommand;
 use App\UseCases\AcceptAttendanceUseCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Date;
+use Exception;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class AcceptAttendanceUseCaseTest extends TestCase
 {
-    use RefreshDatabase;
-
     #[Test]
-    public function accept_attendance()
+    public function given_applicant_paid_event_accept_attendance()
     {
-        $event = Event::factory()->create();
-        $applicant = User::factory()->create();
-        $applicant->payments()->attach($event, ['paid_at' => Date::now()]);
+        $event = new Event;
+        $event->organiser = User::factory()->make();
+        $applicant = User::factory()->make();
+        $event->applyEventPaymentReceived(new EventPaymentReceived($event, $applicant));
 
-        $usecase = new AcceptAttendanceUseCase;
+        $usecase = new AcceptAttendanceUseCase($repository = new InMemoryRepository);
         $command = new AcceptAttendanceCommand;
-        $command->event = $event;
         $command->applicant = $applicant;
+        $command->event = $event;
         $usecase->execute($event->organiser, $command);
 
-        $this->assertEquals(2, $event->confirmed_participant_count);
-        $this->assertCount(1, $event->attendance);
-        $event->attendance->each(fn ($event) => $this->assertNotNull($event->pivot->accepted_at));
+        $this->assertCount(1, $event->getRecordedEvents());
+        $this->assertInstanceOf(ApplicantWasAccepted::class, $event->getRecordedEvents()[0]);
+        $this->assertCount(1, $repository->events);
+        $this->assertCount(1, $repository->acceptedEvents);
     }
 
     #[Test]
-    public function given_unpaid_event_throws_exception()
+    public function given_applicant_unpaid_event_throws_exception()
     {
-        $event = Event::factory()->create();
-        $applicant = User::factory()->create();
+        $event = new Event;
+        $event->organiser = User::factory()->make();
+        $applicant = User::factory()->make();
+        $repository = new InMemoryRepository;
 
-        $this->expectException(NotAppliedEvent::class);
+        try {
+            $usecase = new AcceptAttendanceUseCase($repository);
+            $command = new AcceptAttendanceCommand;
+            $command->event = $event;
+            $command->applicant = $applicant;
+            $usecase->execute($event->organiser, $command);
+        } catch (Exception $e) {
+            $this->assertInstanceOf(NotAppliedEvent::class, $e);
+        }
 
-        $usecase = new AcceptAttendanceUseCase;
-        $command = new AcceptAttendanceCommand;
-        $command->event = $event;
-        $command->applicant = $applicant;
-        $usecase->execute($event->organiser, $command);
+        $this->assertCount(1, $event->getRecordedEvents());
+        $this->assertInstanceOf(ApplicantHasNotPaid::class, $event->getRecordedEvents()[0]);
+        $this->assertCount(1, $repository->events);
+        $this->assertCount(0, $repository->acceptedEvents);
     }
+}
 
-    #[Test]
-    public function given_not_organised_event_throws_exception()
+class InMemoryRepository implements EventRepository
+{
+    public array $events = []; // The event store
+    public array $acceptedEvents = []; // A read model
+
+    public function persist(Event $event): void
     {
-        $event = Event::factory()->create();
-        $applicant = User::factory()->create();
+        $this->events[] = $event;
 
-        $this->expectException(UnauthorizedEvent::class);
-
-        $usecase = new AcceptAttendanceUseCase;
-        $command = new AcceptAttendanceCommand;
-        $command->event = $event;
-        $command->applicant = $applicant;
-        $usecase->execute($applicant, $command);
+        if ($event->isPaid) {
+            $this->acceptedEvents[] = $event;
+        }
     }
 }
