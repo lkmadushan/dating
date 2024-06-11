@@ -7,9 +7,12 @@
     "require": {
         "php": "^8.2",
         "cmixin/enhanced-period": "^1.2",
+        "eventsauce/eventsauce": "^3.6",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
-        "matanyadaev/laravel-eloquent-spatial": "^4.2"
+        "matanyadaev/laravel-eloquent-spatial": "^4.2",
+        "nuwave/lighthouse": "^6.36",
+        "spatie/laravel-event-sourcing": "^7.6"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

@@ -2,9 +2,9 @@
 
 namespace App\Exceptions;
 
-use App\Models\Event;
 use App\Models\User;
 use RuntimeException;
+use App\Aggregates\Event;
 
 class NotAppliedEvent extends RuntimeException
 {

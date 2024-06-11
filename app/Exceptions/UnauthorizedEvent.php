@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
-use App\Models\Event;
+use App\Aggregates\Event;
 use App\Models\User;
 use RuntimeException;
 
